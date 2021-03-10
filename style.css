@@ -1,0 +1,93 @@
+body {
+  background: rgba(2, 0, 36, 0.9);
+  display: grid;
+  grid-template-columns: auto;
+  gap: 1rem;
+  padding: 3%;
+}
+
+.status {
+  margin: auto;
+  font-size: 2rem;
+  font-weight: 400;
+  color: lightgray;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+.status-gameover {
+  color: red;
+}
+
+.container {
+  padding: 1rem;
+  margin: auto;
+  background-color: rgb(73, 73, 73);
+}
+
+.field {
+  display: grid;
+  grid-template-columns: repeat(21, auto);
+  gap: 2px;
+}
+
+.point {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid black;
+  background-color: rgb(43, 42, 42);
+}
+
+.snakeHead {
+  background: red;
+  border: 1px solid orange;
+}
+
+.snakeBody {
+  background: red;
+}
+
+.berry {
+  background: orange;
+}
+
+#controlForm {
+  display: flex;
+  flex-direction: column;
+  width: 10rem;
+  margin: auto;
+  padding: 1.2rem;
+  background: rgb(99, 99, 99);
+}
+
+button {
+  padding: 0.5rem;
+}
+
+#restartButton {
+  margin-bottom: 0.8rem;
+}
+
+input {
+  margin-top: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+input:invalid {
+  border-color: red;
+}
+input:valid {
+  border-color: green;
+}
+
+datalist {
+  display: flex;
+  width: 110%;
+  font-size: 0.8rem;
+  justify-content: space-between;
+}
+
+p {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
