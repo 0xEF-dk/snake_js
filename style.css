@@ -4,6 +4,7 @@ body {
   grid-template-columns: auto;
   gap: 1rem;
   padding: 3%;
+  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
 }
 
 .status {
@@ -11,7 +12,6 @@ body {
   font-size: 2rem;
   font-weight: 400;
   color: lightgray;
-  font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
 }
 
 .status-gameover {
@@ -90,4 +90,16 @@ p {
   padding: 0;
   margin: 0;
   text-align: center;
+}
+
+.joystick {
+  display: flex;
+  flex-direction: column;
+  width: 10rem;
+  justify-self: center;
+}
+
+#joystickForm {
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
 }

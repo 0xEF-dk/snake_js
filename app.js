@@ -203,6 +203,42 @@ function mainLoopCB() {
 
 let mainLoop = setInterval(mainLoopCB, field.getSpeed())
 
+let joystickButton = document.querySelector('#upBtn')
+joystickButton.addEventListener('click', (ev) => {
+  ev.preventDefault()
+  if (snake.getAllowToTurn()) {
+    snake.setAllowToTurn(false)
+    snake.turnUp()
+  }
+})
+
+joystickButton = document.querySelector('#downBtn')
+joystickButton.addEventListener('click', (ev) => {
+  ev.preventDefault()
+  if (snake.getAllowToTurn()) {
+    snake.setAllowToTurn(false)
+    snake.turnDown()
+  }
+})
+
+joystickButton = document.querySelector('#leftBtn')
+joystickButton.addEventListener('click', (ev) => {
+  ev.preventDefault()
+  if (snake.getAllowToTurn()) {
+    snake.setAllowToTurn(false)
+    snake.turnLeft()
+  }
+})
+
+joystickButton = document.querySelector('#rightBtn')
+joystickButton.addEventListener('click', (ev) => {
+  ev.preventDefault()
+  if (snake.getAllowToTurn()) {
+    snake.setAllowToTurn(false)
+    snake.turnRight()
+  }
+})
+
 document.addEventListener('keydown', function (event) {
   const key = event.key // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
   switch (event.key) {
