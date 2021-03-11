@@ -8,6 +8,8 @@ body {
 }
 
 .status {
+  position: sticky;
+  top: 0;
   margin: auto;
   font-size: 2rem;
   font-weight: 400;
@@ -21,6 +23,8 @@ body {
 .container {
   padding: 1rem;
   margin: auto;
+  position: sticky;
+  top: 2.5rem;
   background-color: rgb(73, 73, 73);
 }
 
@@ -93,6 +97,7 @@ p {
 }
 
 .joystick {
+  position: sticky;
   display: flex;
   flex-direction: column;
   width: 10rem;
