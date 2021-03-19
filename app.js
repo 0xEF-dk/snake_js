@@ -61,9 +61,9 @@ let field = {
       item.classList.remove('snakeHead', 'snakeBody', 'berry')
     })
     snake.getPointsID().forEach((item, index) => {
-      index
-        ? document.querySelector(item).classList.add('snakeBody')
-        : document.querySelector(item).classList.add('snakeHead')
+      document
+        .querySelector(item)
+        .classList.add(`${index ? 'snakeBody' : 'snakeHead'}`)
     })
     document.querySelector(berry.getPointsID()).classList.add('berry')
     snake.setAllowToTurn(true)
