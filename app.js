@@ -273,6 +273,7 @@ document.querySelector('#speedInput').addEventListener('change', (ev) => {
   ev.preventDefault()
   clearInterval(mainLoop)
   mainLoop = setInterval(mainLoopCB, field.getSpeed())
+  ev.target.blur()
 })
 
 //*APPLICATION INIT END
