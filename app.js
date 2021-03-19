@@ -22,6 +22,8 @@ let field = {
   minY: 0,
   maxX: 21,
   maxY: 21,
+  score: 0,
+  scoreRate: 1,
 
   getMinX() {
     return this.minX
@@ -37,6 +39,21 @@ let field = {
 
   getMaxY() {
     return this.maxY
+  },
+
+  getScore() {
+    return this.score
+  },
+
+  setScore(node, newScore = 0) {
+    this.score = newScore
+    node.textContent = this.score
+  },
+
+  addScore(node, countScore = 1) {
+    this.score += countScore * document.querySelector('#speedInput').value
+    if (this.score <= 0) this.score = 1
+    node.textContent = this.score
   },
 
   render(snake, berry) {
@@ -63,6 +80,7 @@ let field = {
     snake.reset()
     berry.getNewPosition()
     field.render(snake, berry)
+    this.scoreRate = this.getSpeed()
   },
 
   getSpeed() {
@@ -107,6 +125,7 @@ let snake = {
     } else {
       this.state.body.unshift(nextHeadPosition)
       if (nextHeadPosition.toString() == berry.position.toString()) {
+        field.addScore($score)
         berry.getNewPosition(snake)
       } else {
         this.state.body.pop()
@@ -180,6 +199,7 @@ let berry = {
 //*MAIN OBJECTS END
 
 //*APPLICATION INIT BEGIN
+let $score = document.querySelector('#score')
 
 let $tickmarks = document.querySelector('#tickmarks')
 for (let i = 0; i <= 10; i++) {
@@ -244,6 +264,7 @@ document.querySelector('#restartButton').addEventListener('click', (ev) => {
   const status = document.querySelector('.status')
   status.classList.remove('status-gameover')
   status.textContent = 'Играем!'
+  field.setScore($score)
   clearInterval(mainLoop)
   mainLoop = setInterval(mainLoopCB, field.getSpeed())
 })
