@@ -1,3 +1,22 @@
+//*GLOBAL CONSTANTS BEGIN
+const directions = {
+  left: -2,
+  up: -1,
+  right: 2,
+  down: 1,
+}
+//*GLOBAL CONSTANTS END
+
+//*GLOBAL FUNCTIONS BEGIN
+function searchSubarray(array, subArray) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][0] == subArray[0] && array[i][1] == subArray[1]) return true
+  }
+  return false
+}
+//*GLOBAL FUNCTIONS END
+
+//*MAIN OBJECTS BEGIN
 let field = {
   minX: 0,
   minY: 0,
@@ -52,13 +71,6 @@ let field = {
   },
 }
 
-function searchSubarray(array, subArray) {
-  for (let i = 0; i < array.length; i++) {
-    if (array[i][0] == subArray[0] && array[i][1] == subArray[1]) return true
-  }
-  return false
-}
-
 let snake = {
   state: {
     body: [
@@ -78,29 +90,27 @@ let snake = {
   },
 
   makeStep(berry) {
-    let nextHeadPosition = [
-      this.state.body[0][0] + +this.state.direction[0],
-      this.state.body[0][1] + +this.state.direction[1],
-    ]
-
-    if (nextHeadPosition[0] < field.getMinX()) {
-      nextHeadPosition[0] = field.getMaxX() - 1
-    } else if (nextHeadPosition[1] < field.getMinY()) {
-      nextHeadPosition[1] = field.getMaxY() - 1
-    } else if (nextHeadPosition[0] > field.getMaxX() - 1) {
-      nextHeadPosition[0] = field.getMinX()
-    } else if (nextHeadPosition[1] > field.getMaxY() - 1) {
-      nextHeadPosition[1] = field.getMinY()
-    }
+    let nextHeadPosition = this.state.body[0].map(
+      (number, index) => number + this.state.direction[index]
+    )
+    nextHeadPosition.forEach((item, index) => {
+      let axis = index ? 'Y' : 'X'
+      if (item < field[`getMin${axis}`]()) {
+        nextHeadPosition[index] = field[`getMax${axis}`]() - 1
+      } else if (item > field[`getMax${axis}`]() - 1) {
+        nextHeadPosition[index] = field[`getMin${axis}`]()
+      }
+    })
 
     if (searchSubarray(this.state.body, nextHeadPosition)) {
       field.gameOver()
-    } else if (nextHeadPosition.toString() == berry.position.toString()) {
-      this.state.body.unshift(nextHeadPosition)
-      berry.getNewPosition(snake)
     } else {
       this.state.body.unshift(nextHeadPosition)
-      this.state.body.pop()
+      if (nextHeadPosition.toString() == berry.position.toString()) {
+        berry.getNewPosition(snake)
+      } else {
+        this.state.body.pop()
+      }
     }
   },
 
@@ -125,28 +135,13 @@ let snake = {
     this.state.direction = direction
   },
 
-  turnLeft() {
-    if (this.state.direction[0]) {
-      this.changeDirection([0, -1], false)
-    }
-  },
-
-  turnRight() {
-    if (this.state.direction[0]) {
-      this.changeDirection([0, 1], false)
-    }
-  },
-
-  turnUp() {
-    if (this.state.direction[1]) {
-      this.changeDirection([-1, 0], false)
-    }
-  },
-
-  turnDown() {
-    if (this.state.direction[1]) {
-      this.changeDirection([1, 0], false)
-    }
+  turn(direction = 0) {
+    //-2 - left, -1 - up, 2 - right, 1 - down
+    if (this.state.direction[Math.abs(direction % 2)])
+      this.changeDirection(
+        [direction % 2, direction % 2 ? 0 : Math.sign(direction)],
+        false
+      )
   },
 }
 
@@ -156,24 +151,21 @@ let berry = {
   getPointsID() {
     return (
       '#pnt' +
-      (this.position[0] < 10
-        ? '0' + this.position[0]
-        : +this.position[0].toString()) +
-      (this.position[1] < 10
-        ? '0' + this.position[1]
-        : +this.position[1].toString())
+      this.position
+        .map((item) => {
+          return item < 10 ? '0' + item : item
+        })
+        .join('')
     )
   },
 
   generateNewPosition() {
-    return [
-      Math.floor(
-        Math.random() * (field.getMaxX() - field.getMinX()) + field.getMinX()
-      ),
-      Math.floor(
-        Math.random() * (field.getMaxY() - field.getMinY()) + field.getMinY()
-      ),
-    ]
+    return ['X', 'Y'].map((item) => {
+      return Math.floor(
+        Math.random() * (field[`getMax${item}`]() - field[`getMin${item}`]()) +
+          field[`getMin${item}`]()
+      )
+    })
   },
 
   getNewPosition() {
@@ -185,6 +177,21 @@ let berry = {
   },
 }
 
+//*MAIN OBJECTS END
+
+//*APPLICATION INIT BEGIN
+
+let $tickmarks = document.querySelector('#tickmarks')
+for (let i = 0; i <= 10; i++) {
+  if (!i) {
+    $tickmarks.innerHTML += `<option value="0" label="Мин."></option>`
+  } else if (i == 10) {
+    $tickmarks.innerHTML += `<option value="100" label="Макс."></option>`
+  } else {
+    $tickmarks.innerHTML += `<option value="${i * 10}"></option>`
+  }
+}
+
 let $field = document.querySelector('.field')
 for (let i = field.getMinX(); i < field.getMaxX(); i++) {
   for (let j = field.getMinY(); j < field.getMaxY(); j++) {
@@ -193,6 +200,14 @@ for (let i = field.getMinX(); i < field.getMaxX(); i++) {
     }"></div>`
   }
 }
+
+let $joystickForm = document.querySelector('#joystickForm')
+;['up', 'left', 'right', 'down'].forEach((item) => {
+  $joystickForm.innerHTML += `<button id="${item}Btn">&${item.slice(
+    0,
+    1
+  )}arr;</button>`
+})
 
 field.init()
 
@@ -203,73 +218,23 @@ function mainLoopCB() {
 
 let mainLoop = setInterval(mainLoopCB, field.getSpeed())
 
-let joystickButton = document.querySelector('#upBtn')
-joystickButton.addEventListener('click', (ev) => {
-  ev.preventDefault()
-  if (snake.getAllowToTurn()) {
-    snake.setAllowToTurn(false)
-    snake.turnUp()
-  }
-})
-
-joystickButton = document.querySelector('#downBtn')
-joystickButton.addEventListener('click', (ev) => {
-  ev.preventDefault()
-  if (snake.getAllowToTurn()) {
-    snake.setAllowToTurn(false)
-    snake.turnDown()
-  }
-})
-
-joystickButton = document.querySelector('#leftBtn')
-joystickButton.addEventListener('click', (ev) => {
-  ev.preventDefault()
-  if (snake.getAllowToTurn()) {
-    snake.setAllowToTurn(false)
-    snake.turnLeft()
-  }
-})
-
-joystickButton = document.querySelector('#rightBtn')
-joystickButton.addEventListener('click', (ev) => {
-  ev.preventDefault()
-  if (snake.getAllowToTurn()) {
-    snake.setAllowToTurn(false)
-    snake.turnRight()
-  }
+;['up', 'down', 'left', 'right'].forEach((item) => {
+  document.querySelector(`#${item}Btn`).addEventListener('click', (ev) => {
+    ev.preventDefault()
+    if (snake.getAllowToTurn()) {
+      snake.setAllowToTurn(false)
+      snake.turn(directions[item])
+    }
+  })
 })
 
 document.addEventListener('keydown', function (event) {
-  const key = event.key // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
-  switch (event.key) {
-    case 'ArrowLeft':
-      // Left pressed
-      if (snake.getAllowToTurn()) {
-        snake.setAllowToTurn(false)
-        snake.turnLeft()
-      }
-      break
-    case 'ArrowRight':
-      // Right pressed
-      if (snake.getAllowToTurn()) {
-        snake.setAllowToTurn(false)
-        snake.turnRight()
-      }
-      break
-    case 'ArrowUp':
-      // Up pressed
-      if (snake.getAllowToTurn()) {
-        snake.setAllowToTurn(false)
-        snake.turnUp()
-      }
-      break
-    case 'ArrowDown':
-      // Down pressed
-      if (snake.getAllowToTurn()) {
-        snake.setAllowToTurn(false)
-        snake.turnDown()
-      }
-      break
+  if (event.key.slice(0, 5) == 'Arrow') {
+    const key = event.key.slice(5).toLowerCase() // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
+    if (snake.getAllowToTurn()) {
+      snake.setAllowToTurn(false)
+      snake.turn(directions[key])
+    }
   }
 })
 
@@ -288,3 +253,5 @@ document.querySelector('#speedInput').addEventListener('change', (ev) => {
   clearInterval(mainLoop)
   mainLoop = setInterval(mainLoopCB, field.getSpeed())
 })
+
+//*APPLICATION INIT END

@@ -104,7 +104,26 @@ p {
   justify-self: center;
 }
 
+#upBtn {
+  grid-area: upBtn;
+}
+
+#downBtn {
+  grid-area: downBtn;
+}
+
+#leftBtn {
+  grid-area: leftBtn;
+}
+
+#rightBtn {
+  grid-area: rightBtn;
+}
+
 #joystickForm {
   display: grid;
-  grid-template-columns: 33% 33% 33%;
+  grid-template-areas:
+    '. upBtn .'
+    'leftBtn . rightBtn'
+    '. downBtn .';
 }
